@@ -25,7 +25,7 @@ Let's dive in! 🚀
 ### 1. Clone the repository
 
 ```bash
-git clone git@github.com:WLDing-blocks/wld-101.git
+git clone git@github.com:WLDing-blocks/wld-mini-apps-101.git
 cd wld-101
 ```
 
