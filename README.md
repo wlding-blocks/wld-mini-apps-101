@@ -106,7 +106,7 @@ From the [Developer Portal](https://developer.worldcoin.org/), navigate to `Conf
 
 The World App will automatically launch your Mini App! 🎉
 
-![image](https://github.com/user-attachments/assets/c2c7b49b-5641-4fd1-abc0-a310b621a4dd)
+<img width="350" alt="image" src="https://github.com/user-attachments/assets/c2c7b49b-5641-4fd1-abc0-a310b621a4dd" />
 
 ---
 
