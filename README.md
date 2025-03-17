@@ -58,6 +58,24 @@ Generate your **API Key** under the `API Keys` section.
 
 <img width="400" alt="image" src="https://github.com/user-attachments/assets/b8b8906a-25e1-411f-8eee-d647fa1e2672" />
 
+#### 🔑 JWT_SECRET
+
+Add a strong, random string as your JWT secret for secure user sessions:
+
+JWT_SECRET=your_secure_random_string_at_least_32_chars_long
+
+This secret is used to:
+- Sign and verify JWT tokens for user authentication
+- Maintain persistent login sessions across page refreshes
+- Securely store user information between visits
+
+**Security Tips:**
+- Use a cryptographically strong random string (at least 32 characters)
+- Never expose this secret in client-side code
+- Consider rotating this secret periodically for enhanced security
+
+Without a properly configured `JWT_SECRET`, the authentication system will not work correctly, and users will need to log in each time they visit your Mini App.
+
 ---
 
 ## ▶️ Running the Project
