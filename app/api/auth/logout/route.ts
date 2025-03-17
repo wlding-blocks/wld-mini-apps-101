@@ -15,4 +15,4 @@ export async function POST() {
         success: true,
         message: 'Logged out successfully' 
     });
-} 
+}
