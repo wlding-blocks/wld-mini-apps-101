@@ -2,17 +2,27 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { missions, type Mission } from "@/lib/data"
-import { Clock, CheckCircle } from "lucide-react"
+import { verifyOnchainActivity, generateMockActivity } from "@/lib/onchain"
+import { Clock, CheckCircle, Trophy, Coins, Calendar, ArrowRight } from "lucide-react"
+import { Button } from "@worldcoin/mini-apps-ui-kit-react"
 
 // Group missions by category (difficulty level)
 const groupedMissions: Record<string, Mission[]> = {
-  Beginner: missions.filter((_: Mission, index: number) => index < 2),
-  Intermediate: missions.filter((_: Mission, index: number) => index >= 2 && index < 4),
-  Advanced: missions.filter((_: Mission, index: number) => index === 4),
+  "Learn & Earn": missions.filter((_: Mission, index: number) => index < 5),
+  "On-Chain Missions": missions.filter((_: Mission, index: number) => index >= 5),
 }
 
 export default function MissionsPage() {
   const [claimedMissions, setClaimedMissions] = useState<string[]>([])
+  const [missionProgress, setMissionProgress] = useState<Record<string, {
+    isCompleted: boolean;
+    progress: {
+      current: number;
+      required: number;
+      percentage: number;
+    };
+    daysActive?: number;
+  }>>({})
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState({
     title: "",
@@ -20,13 +30,35 @@ export default function MissionsPage() {
   })
   const [completionPercentage, setCompletionPercentage] = useState(0)
   const [activeCategory, setActiveCategory] = useState("All")
+  const [userAddress, setUserAddress] = useState<string>("0x123...userAddress") // Mock user address
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Function to load mission progress
+  const loadMissionProgress = async () => {
+    setIsLoading(true)
+    const progressData: Record<string, any> = {}
+    
+    // Verify on-chain activity for all missions with on-chain verification
+    for (const mission of missions) {
+      if (mission.onchainVerification) {
+        const result = await verifyOnchainActivity(mission, userAddress)
+        progressData[mission.id] = result
+      }
+    }
+    
+    setMissionProgress(progressData)
+    setIsLoading(false)
+  }
 
   // Update progress stats when claimed missions change
   useEffect(() => {
     // Calculate completion percentage
     const percentage = (claimedMissions.length / missions.length) * 100
     setCompletionPercentage(Math.round(percentage))
-  }, [claimedMissions])
+    
+    // Load mission progress on initial load
+    loadMissionProgress()
+  }, [claimedMissions, userAddress])
 
   const showToast = (title: string, description: string) => {
     setToastMessage({ title, description })
@@ -34,11 +66,29 @@ export default function MissionsPage() {
     setTimeout(() => setToastVisible(false), 3000)
   }
 
-  const handleClaimReward = (missionId: string, reward: string) => {
-    if (claimedMissions.includes(missionId)) return
+  const handleClaimReward = (mission: Mission) => {
+    if (claimedMissions.includes(mission.id)) return
 
-    setClaimedMissions([...claimedMissions, missionId])
-    showToast("Reward claimed!", `You've successfully claimed ${reward}`)
+    // If it's an on-chain mission, check if it's completed first
+    if (mission.onchainVerification) {
+      const progress = missionProgress[mission.id]
+      if (!progress || !progress.isCompleted) {
+        showToast("Mission incomplete", "Complete the on-chain requirements first")
+        return
+      }
+    }
+
+    setClaimedMissions([...claimedMissions, mission.id])
+    showToast("Reward claimed!", `You've successfully claimed ${mission.reward}`)
+  }
+
+  // Simulate generating more mock activity data for testing
+  const handleGenerateMockActivity = () => {
+    if (missions[5]?.onchainVerification?.tokenAddress) {
+      generateMockActivity(missions[5].onchainVerification.tokenAddress, userAddress)
+      loadMissionProgress()
+      showToast("Data generated", "Generated mock ORO token claim data")
+    }
   }
 
   // Categories with all missions
@@ -73,14 +123,50 @@ export default function MissionsPage() {
 
       <div className="max-w-4xl mx-auto w-full px-4 py-8">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-2">
-            <span className="text-gray-400">Discover</span> <span className="text-gray-900">missions</span>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">
+            Complete <span className="text-blue-600">missions</span> to earn <span className="text-blue-600">rewards</span>
           </h1>
-          <h2 className="text-5xl font-bold mb-8">
-            <span className="text-gray-900">to</span> <span className="text-gray-400">earn</span>{" "}
-            <span className="text-gray-400">Rewards</span>
-          </h2>
+          <p className="text-gray-600 mb-4">Engage with the World ecosystem and earn rewards</p>
+          
+          {/* Mock data generator (for demo purposes) */}
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={handleGenerateMockActivity}
+            className="mt-4"
+          >
+            Generate Mock ORO Claims
+          </Button>
+        </div>
+
+        {/* Progress Overview */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <h2 className="text-xl font-bold mb-4">Your Progress</h2>
+          <div className="flex flex-wrap gap-6">
+            <div className="flex items-center">
+              <div className="bg-blue-100 p-3 rounded-full mr-3">
+                <Trophy className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Missions Completed</p>
+                <p className="text-xl font-bold">{claimedMissions.length} / {missions.length}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center">
+              <div className="bg-green-100 p-3 rounded-full mr-3">
+                <Coins className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Rewards Claimed</p>
+                <p className="text-xl font-bold">{claimedMissions.reduce((total, id) => {
+                  const mission = missions.find(m => m.id === id);
+                  return total + (mission?.rewardAmount || 0);
+                }, 0)} {claimedMissions.length > 0 ? missions.find(m => m.id === claimedMissions[0])?.rewardToken : ""}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Categories Section */}
@@ -102,66 +188,112 @@ export default function MissionsPage() {
         <div className="grid grid-cols-1 gap-6">
           {missionsToDisplay.map((mission: Mission) => {
             const isClaimed = claimedMissions.includes(mission.id)
-            const completionText = isClaimed ? "100%" : "0%"
+            const onchainProgress = mission.onchainVerification ? missionProgress[mission.id] : null
+            
+            // Calculate progress percentage
+            let progressPercentage = isClaimed ? 100 : 0
+            if (onchainProgress) {
+              progressPercentage = onchainProgress.progress.percentage
+            }
 
             return (
               <div
                 key={mission.id}
-                className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100"
               >
                 <div className="p-6">
                   <div className="flex flex-col md:flex-row gap-6">
                     {/* Mission Image/Icon */}
-                    <div className="w-full md:w-1/3 aspect-video md:aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-100 to-blue-400 flex items-center justify-center">
-                      <div className="text-3xl font-bold text-white">{mission.name.substring(0, 1)}</div>
+                    <div className="w-full md:w-1/4 aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                      <div className="text-3xl font-bold text-white">
+                        {mission.onchainVerification ? <Coins className="h-12 w-12" /> : mission.name.substring(0, 1)}
+                      </div>
                     </div>
 
                     {/* Mission Content */}
-                    <div className="w-full md:w-2/3 flex flex-col justify-between">
+                    <div className="w-full md:w-3/4 flex flex-col justify-between">
                       <div>
-                        <h3 className="text-2xl font-bold mb-2">{mission.name}</h3>
-                        <div className="flex items-center text-gray-500 mb-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-bold">{mission.name}</h3>
+                          <div className="flex items-center text-sm">
+                            <span className={`px-3 py-1 rounded-full ${
+                              isClaimed ? "bg-green-100 text-green-700" : 
+                              onchainProgress?.isCompleted ? "bg-blue-100 text-blue-700" : 
+                              "bg-gray-100 text-gray-700"
+                            }`}>
+                              {isClaimed ? "Completed" : onchainProgress?.isCompleted ? "Ready to Claim" : "In Progress"}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center text-gray-500 text-sm mb-3">
                           <Clock className="h-4 w-4 mr-2" />
                           <span>{mission.timeRequired}</span>
-                          <span className="mx-2">•</span>
-                          <span>{Number.parseInt(mission.id) + 1} Lessons</span>
+                          {mission.onchainVerification?.requiredDays && (
+                            <>
+                              <span className="mx-2">•</span>
+                              <Calendar className="h-4 w-4 mr-2" />
+                              <span>{mission.onchainVerification.requiredDays} Days</span>
+                            </>
+                          )}
                         </div>
-                        <p className="text-gray-600 mb-6">{mission.description}</p>
+                        
+                        <p className="text-gray-600 mb-4">{mission.description}</p>
+                        
+                        {/* On-chain verification details */}
+                        {mission.onchainVerification && (
+                          <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                            <h4 className="font-medium text-gray-700 mb-2">On-chain Requirements:</h4>
+                            <div className="flex flex-col space-y-2">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">
+                                  {mission.onchainVerification.action === "claim" ? "Token Claims" : "Actions"}: 
+                                </span>
+                                <span className="font-medium">
+                                  {isLoading ? "Loading..." : `${onchainProgress?.progress.current || 0} / ${mission.onchainVerification.requiredCount}`}
+                                </span>
+                              </div>
+                              
+                              {mission.onchainVerification.requiredDays && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Days Active: </span>
+                                  <span className="font-medium">
+                                    {isLoading ? "Loading..." : `${onchainProgress?.daysActive || 0} / ${mission.onchainVerification.requiredDays}`}
+                                  </span>
+                                </div>
+                              )}
+                              
+                              {/* Progress bar */}
+                              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                                <div 
+                                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-500" 
+                                  style={{ width: `${isLoading ? 0 : progressPercentage}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="relative w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
-                          <div className="absolute inset-0 rounded-full">
-                            <svg width="100%" height="100%" viewBox="0 0 100 100">
-                              <circle cx="50" cy="50" r="45" fill="none" stroke="#e6e6e6" strokeWidth="10" />
-                              {isClaimed && (
-                                <circle
-                                  cx="50"
-                                  cy="50"
-                                  r="45"
-                                  fill="none"
-                                  stroke="#3b82f6"
-                                  strokeWidth="10"
-                                  strokeDasharray="283"
-                                  strokeDashoffset="0"
-                                  transform="rotate(-90 50 50)"
-                                />
-                              )}
-                            </svg>
-                          </div>
-                          <span className="text-xl font-bold">{completionText}</span>
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+                          <Coins className="h-5 w-5 text-blue-600 mr-2" />
+                          <span className="font-medium text-blue-800">{mission.reward}</span>
                         </div>
 
                         <button
-                          onClick={() => handleClaimReward(mission.id, mission.reward)}
-                          disabled={isClaimed}
-                          className={`px-6 py-3 rounded-full text-sm font-medium transition-colors ${
+                          onClick={() => handleClaimReward(mission)}
+                          disabled={isClaimed || (mission.onchainVerification && (!onchainProgress || !onchainProgress.isCompleted))}
+                          className={`px-6 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
                             isClaimed
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : mission.onchainVerification && (!onchainProgress || !onchainProgress.isCompleted)
                               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                               : "bg-blue-600 text-white hover:bg-blue-700"
                           }`}
                         >
-                          {isClaimed ? "Completed" : "Claim Rewards"}
+                          {isClaimed ? "Claimed" : "Claim Rewards"}
+                          <ArrowRight className="h-4 w-4 ml-2" />
                         </button>
                       </div>
                     </div>
