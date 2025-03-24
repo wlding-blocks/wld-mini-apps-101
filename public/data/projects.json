@@ -1,0 +1,57 @@
+[
+  {
+    "id": "1",
+    "name": "Learn",
+    "description": "Learn to Earn",
+    "tokenSymbol": "WLD",
+    "tokenIcon": "https://cryptologos.cc/logos/worldcoin-wld-logo.png",
+    "tokenPrice": 0.48,
+    "tokenAmount": 10,
+    "tokenAddress": "0x2cFc85d8E48F8EAB294be644d9E25C3030863003",
+    "projectUrl": "https://learn.studios.toolsforhumanity.com/"
+  },
+  {
+    "id": "2",
+    "name": "ORO App",
+    "description": "Trade tokens with low fees and high liquidity",
+    "tokenSymbol": "ORO",
+    "tokenIcon": "https://cryptologos.cc/logos/worldcoin-wld-logo.png",
+    "tokenPrice": 2.14,
+    "tokenAmount": 1,
+    "tokenAddress": "0xF3F92A60e6004f3982F0FdE0d43602fC0a30a0dB",
+    "projectUrl": "https://worldoro.com"
+  },
+  {
+    "id": "3",
+    "name": "Orb App",
+    "description": "Buy, sell, and mint unique digital collectibles",
+    "tokenSymbol": "ORB",
+    "tokenIcon": "https://cryptologos.cc/logos/worldcoin-wld-logo.png",
+    "tokenPrice": 3.75,
+    "tokenAmount": 1000,
+    "tokenAddress": "0xF3F92A60e6004f3982F0FdE0d43602fC0a30a0dB",
+    "projectUrl": "https://www.orbtoken.xyz"
+  },
+  {
+    "id": "4",
+    "name": "Egg Vault",
+    "description": "Transfer assets seamlessly between blockchains",
+    "tokenSymbol": "EGG",
+    "tokenIcon": "https://cryptologos.cc/logos/multichain-multi-logo.png",
+    "tokenPrice": 1.23,
+    "tokenAmount": 1,
+    "tokenAddress": "0x361990637F68f2E52B6E38194330BB3964B0E908",
+    "projectUrl": "https://worldcoin-egg-vault.holdstation.com"
+  },
+  {
+    "id": "5",
+    "name": "DNA Project",
+    "description": "Decentralized identity verification and management",
+    "tokenSymbol": "ID",
+    "tokenIcon": "https://cryptologos.cc/logos/worldcoin-wld-logo.png",
+    "tokenPrice": 0.95,
+    "tokenAmount": 15000,
+    "tokenAddress": "0x70d2b7c19352bb76e4409858ff5746e500f2b67c",
+    "projectUrl": "https://example.com/did"
+  }
+] 

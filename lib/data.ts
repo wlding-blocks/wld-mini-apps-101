@@ -1,92 +1,47 @@
-// Mock data for projects
-export const projects = [
-  {
-    id: "1",
-    name: "DeFi Yield Optimizer",
-    description: "Optimize your yield farming across multiple protocols",
-    tokenSymbol: "YOP",
-    tokenIcon: "https://cryptologos.cc/logos/yearn-finance-yfi-logo.png",
-    tokenPrice: 0.48,
-    tokenAmount: 10000,
-    projectUrl: "https://example.com/defi-yield",
-  },
-  {
-    id: "2",
-    name: "Decentralized Exchange",
-    description: "Trade tokens with low fees and high liquidity",
-    tokenSymbol: "DEX",
-    tokenIcon: "https://cryptologos.cc/logos/uniswap-uni-logo.png",
-    tokenPrice: 2.14,
-    tokenAmount: 5000,
-    projectUrl: "https://example.com/dex",
-  },
-  {
-    id: "3",
-    name: "NFT Marketplace",
-    description: "Buy, sell, and mint unique digital collectibles",
-    tokenSymbol: "NFT",
-    tokenIcon: "https://cryptologos.cc/logos/opensea-logo.png",
-    tokenPrice: 3.75,
-    tokenAmount: 2000,
-    projectUrl: "https://example.com/nft",
-  },
-  {
-    id: "4",
-    name: "Cross-Chain Bridge",
-    description: "Transfer assets seamlessly between blockchains",
-    tokenSymbol: "BRIDGE",
-    tokenIcon: "https://cryptologos.cc/logos/multichain-multi-logo.png",
-    tokenPrice: 1.23,
-    tokenAmount: 8000,
-    projectUrl: "https://example.com/bridge",
-  },
-  {
-    id: "5",
-    name: "Identity Solution",
-    description: "Decentralized identity verification and management",
-    tokenSymbol: "ID",
-    tokenIcon: "https://cryptologos.cc/logos/worldcoin-wld-logo.png",
-    tokenPrice: 0.95,
-    tokenAmount: 15000,
-    projectUrl: "https://example.com/did",
-  },
-];
-
-// Mock data for missions
-export const missions = [
-  {
-    id: "1",
-    name: "Complete Account Setup",
-    description: "Set up your profile and connect your wallet",
-    timeRequired: "5 min",
-    reward: "50 WLD",
-  },
-  {
-    id: "2",
-    name: "Make Your First Trade",
-    description: "Complete a token swap transaction",
-    timeRequired: "10 min",
-    reward: "100 WLD",
-  },
-  {
-    id: "3",
-    name: "Stake in a Pool",
-    description: "Stake tokens in any liquidity pool",
-    timeRequired: "15 min",
-    reward: "200 WLD",
-  },
-  {
-    id: "4",
-    name: "Refer a Friend",
-    description: "Invite someone to join the platform",
-    timeRequired: "5 min",
-    reward: "150 WLD",
-  },
-  {
-    id: "5",
-    name: "Complete KYC Verification",
-    description: "Verify your identity to unlock more features",
-    timeRequired: "20 min",
-    reward: "300 WLD",
-  },
-];
+export interface Mission {
+    id: string
+    name: string
+    description: string
+    timeRequired: string
+    reward: string
+  }
+  
+  export const missions: Mission[] = [
+    {
+      id: "0",
+      name: "Intro to World",
+      description: "Learn the basics of the World platform and how to navigate through the interface.",
+      timeRequired: "12 Minutes",
+      reward: "50 Points",
+    },
+    {
+      id: "1",
+      name: "World App",
+      description: "Explore the World App and discover its key features and functionalities.",
+      timeRequired: "10 Minutes",
+      reward: "75 Points",
+    },
+    {
+      id: "2",
+      name: "Building with World",
+      description: "Create your first project using the World platform tools and resources.",
+      timeRequired: "20 Minutes",
+      reward: "100 Points",
+    },
+    {
+      id: "3",
+      name: "Advanced Features",
+      description: "Dive deeper into World's advanced features and learn how to leverage them.",
+      timeRequired: "25 Minutes",
+      reward: "150 Points",
+    },
+    {
+      id: "4",
+      name: "World Mastery",
+      description: "Master all aspects of the World platform and become a certified expert.",
+      timeRequired: "45 Minutes",
+      reward: "300 Points",
+    },
+  ]
+  
+  
