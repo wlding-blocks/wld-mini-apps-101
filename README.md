@@ -1,148 +1,105 @@
-# WLD-101
+# WorldAgg Project
 
-Welcome! 🎉
+This project consists of three main components:
 
-This repository provides a clear and straightforward template demonstrating how to build a Mini App using [World's Mini Apps](https://docs.world.org/mini-apps).
+1. Graph Node (Docker)
+2. Subgraph
+3. Front-end (Next.js)
 
-The example Mini App uses **Next.js** and showcases various [commands](https://docs.world.org/mini-apps/quick-start/commands) supported by the MiniKit SDK. Start here to quickly experiment and integrate Worldcoin Mini Apps into your projects.
+## Prerequisites
 
-Let's dive in! 🚀
+- [Docker](https://www.docker.com/get-started)
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
 
----
+## Running the Graph Node
 
-## Dependencies
-
-- **[pnpm](https://pnpm.io/)**: Fast and efficient package manager.
-- **[ngrok](https://ngrok.com/)**: Expose your local server publicly for easy testing.
-- **[mini-kit-js](https://www.npmjs.com/package/@worldcoin/mini-kit-js)**: JavaScript SDK for World's Mini Apps.
-- **[minikit-react](https://www.npmjs.com/package/@worldcoin/minikit-react)**: React bindings for MiniKit SDK.
-- **[mini-apps-ui-kit-react](https://www.npmjs.com/package/@worldcoin/mini-apps-ui-kit-react)**: Pre-built UI components for Mini Apps.
-
----
-
-## 🛠️ Setup
-
-### 1. Clone the repository
+The Graph Node runs in Docker and requires PostgreSQL and IPFS.
 
 ```bash
-git clone git@github.com:wlding-blocks/wld-mini-apps-101.git
-cd wld-mini-apps-101
+# Navigate to the graph node directory
+cd graph-node/docker
+
+# Start the containers
+docker-compose -f docker-compose-worldchain.yml up -d
 ```
 
-### 2. Install dependencies
+This will start three containers:
+
+- `docker-graph-node-1`: The Graph Node service
+- `docker-postgres-1`: PostgreSQL database
+- `docker-ipfs-1`: IPFS node
+
+You can check if they're running with:
 
 ```bash
+docker ps
+```
+
+The Graph Node explorer will be available at http://localhost:8000/
+
+## Deploying the Subgraph
+
+Once the Graph Node is running, deploy the subgraph:
+
+```bash
+# Navigate to the subgraph directory
+cd subgraph
+
+# Make the deployment script executable (if needed)
+chmod +x deploy-local-worldchain.sh
+
+# Deploy the subgraph
+./deploy-local-worldchain.sh
+```
+
+The subgraph will be deployed to the local Graph Node and will be available at:
+
+- Explorer: http://localhost:8000/subgraphs/name/oro-token-claims
+- GraphQL endpoint: http://localhost:8000/subgraphs/name/oro-token-claims/graphql
+
+## Running the Front-end
+
+```bash
+# Navigate to the front-end directory
+cd front-end
+
+# Install dependencies (if not already done)
+npm install
+# or
 pnpm install
-```
 
-### 3. Configure your environment variables
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env
-```
-
-Then fill in the required variables:
-
-#### 🔑 APP_ID
-
-Find your **App ID** in the [Developer Portal](https://developer.worldcoin.org/) (`Configuration > Basic`).
-
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/b1d67769-bce7-46b9-a9e2-1591fb7f33f2" />
-
-#### 🔑 DEV_PORTAL_API_KEY
-
-Generate your **API Key** under the `API Keys` section.  
-**Note:** Visible only once—copy it carefully!
-
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/b8b8906a-25e1-411f-8eee-d647fa1e2672" />
-
-#### 🔑 JWT_SECRET
-
-Add a strong, random string as your JWT secret for secure user sessions:
-
-JWT_SECRET=your_secure_random_string_at_least_32_chars_long
-
-This secret is used to:
-- Sign and verify JWT tokens for user authentication
-- Maintain persistent login sessions across page refreshes
-- Securely store user information between visits
-
-**Security Tips:**
-- Use a cryptographically strong random string (at least 32 characters)
-- Never expose this secret in client-side code
-- Consider rotating this secret periodically for enhanced security
-
-Without a properly configured `JWT_SECRET`, the authentication system will not work correctly, and users will need to log in each time they visit your Mini App.
-
----
-
-## ▶️ Running the Project
-
-Run your Mini App locally:
-
-```bash
+# Start the development server
+npm run dev
+# or
 pnpm dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) in your browser.
+The front-end will be available at http://localhost:3000/ (or http://localhost:3001/ if port 3000 is already in use).
 
----
+## Troubleshooting
 
-## 📱 Testing on Mobile
+### Docker Issues
 
-To test your Mini App directly on your phone, expose your app publicly using NGROK.
-
-### 🚀 Using NGROK
-
-Install [NGROK](https://ngrok.com/) and run:
+If you encounter Docker errors:
 
 ```bash
-ngrok http http://localhost:3000
+# Stop all containers
+docker stop $(docker ps -q)
+
+# Remove all containers
+docker rm $(docker ps -aq)
+
+# Remove volumes (if needed)
+docker-compose -f docker-compose-worldchain.yml down -v
 ```
 
-NGROK provides a publicly accessible URL.
+### Graph Node Connection Issues
 
-### 🌎 Configuring Your App (Developer Portal)
+If the subgraph deployment fails with connection errors, ensure the Graph Node container is fully initialized. This might take a minute or two after starting the containers.
 
-Go to the [Developer Portal](https://developer.worldcoin.org/) and configure:
+## Project Structure
 
-- **App URL:** Set it to your NGROK-generated URL.
-
-<img width="400" alt="image" src="https://github.com/user-attachments/assets/4d2c2c1b-cab4-40a7-ad6d-f91d1a77ecc5" />
-
-- **Incognito Actions**: Define an action and use it within `components/Verify/index.tsx`.
-
----
-
-### 📱 Opening your Mini App in World App
-
-From the [Developer Portal](https://developer.worldcoin.org/), navigate to `Configuration > Basic` and scan the generated QR code.
-
-<img width="350" alt="image" src="https://github.com/user-attachments/assets/6f560f96-3fd8-4611-838f-3af7e337d5ce" />
-
-The World App will automatically launch your Mini App! 🎉
-
-<img width="350" alt="image" src="https://github.com/user-attachments/assets/c2c7b49b-5641-4fd1-abc0-a310b621a4dd" />
-
----
-
-## 🔗 Useful Links
-
-- [World Documentation](https://docs.world.org/)
-- [Developer Portal](https://developer.worldcoin.org/)
-
----
-
-## 📞 Contact
-
-Questions or feedback? Feel free to reach out!
-
-- **Telegram:** [@miguellalfaro](https://t.me/miguellalfaro)
-
----
-
-## ℹ️ Notes
-
-This repository is based on the official [minikit-next-template](https://github.com/worldcoin/minikit-next-template). Contributions are welcome—feel free to submit PRs!
+- `graph-node/`: Contains the Graph Node Docker configuration
+- `subgraph/`: Contains the subgraph code and deployment scripts
+- `front-end/`: Contains the Next.js front-end application

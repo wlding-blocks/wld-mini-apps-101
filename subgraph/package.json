@@ -1,0 +1,23 @@
+{
+  "name": "oro_token_claims_subgraph",
+  "version": "0.1.0",
+  "description": "A subgraph to index ORO token claims",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy oro-token-claims --version-label $VERSION_LABEL --node https://subgraphs.alchemy.com/api/subgraphs/deploy --deploy-key $DEPLOY_KEY",
+    "deploy-alchemy": "VERSION_LABEL=v0.0.1 DEPLOY_KEY=HTnCRg0KxPt5aG7FCaMePEWGK1nRegjD npm run deploy",
+    "create-local": "graph create --node http://localhost:8020/ oro-token-claims",
+    "remove-local": "graph remove --node http://localhost:8020/ oro-token-claims",
+    "deploy-local": "graph deploy oro-token-claims --version-label v0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.62.0",
+    "@graphprotocol/graph-ts": "0.31.0",
+    "source-map-support": "^0.5.21"
+  }
+}
+
+
+
+

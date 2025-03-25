@@ -1,0 +1,32 @@
+type TokenClaim @entity {
+  id: ID!
+  claimant: User!
+  amount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type User @entity {
+  id: ID!
+  address: Bytes!
+  totalClaims: BigInt!
+  claims: [TokenClaim!]! @derivedFrom(field: "claimant")
+  firstClaimTimestamp: BigInt
+  lastClaimTimestamp: BigInt
+  uniqueDays: BigInt!
+}
+
+type DailyClaimStat @entity {
+  id: ID!
+  date: String!
+  totalClaims: BigInt!
+  uniqueUsers: BigInt!
+}
+
+type TokenStats @entity {
+  id: ID!
+  totalClaims: BigInt!
+  uniqueClaimants: BigInt!
+  totalAmountClaimed: BigInt!
+}

@@ -1,0 +1,27 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: OROToken
+    network: worldchain
+    source:
+      address: "0xbD23a23b3ad3516De491BE512Ac7131fbC8a69ec"
+      abi: OROToken
+      startBlock: 11765500
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TokenClaim
+        - User
+        - DailyClaimStat
+        - TokenStats
+      abis:
+        - name: OROToken
+          file: OROToken/oro-token.json
+      eventHandlers:
+        - event: Minted(indexed address,uint256)
+          handler: handleMinted
+      file: OROToken/OROToken.wasm
