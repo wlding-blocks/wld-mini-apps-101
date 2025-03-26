@@ -3,27 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+  --font-sora: 'Sora', sans-serif;
+  --font-dm-mono: 'DM Mono', monospace;
+  --font-rubik: 'Rubik', sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  color-scheme: light only;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply text-gray-900 bg-gray-50;
+  font-family: var(--font-rubik), sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-sora), sans-serif;
+}
+
+.text-mono {
+  font-family: var(--font-dm-mono), monospace;
+}
+
+/* Improve visibility of text */
+.text-white-on-light {
+  @apply text-gray-900 bg-white;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 transition-colors rounded-lg px-4 py-2;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors rounded-lg px-4 py-2;
 }
 
 @layer utilities {

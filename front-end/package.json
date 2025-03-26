@@ -19,6 +19,7 @@
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
+    "framer-motion": "^12.6.1",
     "viem": "^2.23.5"
   },
   "devDependencies": {
