@@ -2,6 +2,9 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
+// Add this export to mark the route as dynamic
+export const dynamic = 'force-dynamic';
+
 // Mock implementation - replace with actual DB call
 async function getUserById(userId: string) {
     console.log(`Getting user with ID: ${userId}`);

@@ -98,7 +98,7 @@ export default function MissionsPage() {
     }
 
     setClaimedMissions([...claimedMissions, mission.id])
-    showToast("Reward claimed!", `You've successfully claimed ${mission.reward}`)
+    showToast("Reward claimed!", `You&apos;ve successfully claimed ${mission.reward}`)
   }
 
   // Categories with all missions

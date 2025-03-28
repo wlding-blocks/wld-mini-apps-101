@@ -10,13 +10,22 @@ import { useState } from "react";
 
 const sendPayment = async (recipientAddress: string, selectedToken: Tokens, amount: number) => {
   try {
+    // Send payment details to initiate the payment
     const res = await fetch(`/api/initiate-payment`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipientAddress,
+        token: selectedToken,
+        amount
+      }),
     });
 
-    const { id } = await res.json();
+    if (!res.ok) {
+      throw new Error("Failed to initiate payment");
+    }
 
-    console.log(id);
+    const { id } = await res.json();
 
     const payload: PayCommandInput = {
       reference: id,
@@ -29,6 +38,7 @@ const sendPayment = async (recipientAddress: string, selectedToken: Tokens, amou
       ],
       description: "Thanks for the coffee! ☕",
     };
+    
     if (MiniKit.isInstalled()) {
       return await MiniKit.commandsAsync.pay(payload);
     }
@@ -50,6 +60,16 @@ const handlePay = async (
     return;
   }
 
+  if (!recipientAddress) {
+    setStatus("Please enter a recipient address");
+    return;
+  }
+
+  if (amount <= 0) {
+    setStatus("Please enter a valid amount");
+    return;
+  }
+
   setStatus("Processing payment...");
   const sendPaymentResponse = await sendPayment(recipientAddress, selectedToken, amount);
   const response = sendPaymentResponse?.finalPayload;
@@ -59,16 +79,26 @@ const handlePay = async (
     return;
   }
 
-  if (response.status == "success") {
-    const res = await fetch(`/api/confirm-payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payload: response }),
-    });
-    const payment = await res.json();
-    if (payment.success) {
-      setStatus("Thank you for the coffee! ☕");
-    } else {
+  if (response.status === "success") {
+    try {
+      const res = await fetch(`/api/confirm-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ payload: response }),
+      });
+      
+      if (!res.ok) {
+        throw new Error("Payment confirmation failed");
+      }
+      
+      const payment = await res.json();
+      if (payment.success) {
+        setStatus("Thank you for the coffee! ☕");
+      } else {
+        setStatus("Payment confirmation failed");
+      }
+    } catch (error) {
+      console.error("Error confirming payment:", error);
       setStatus("Payment confirmation failed");
     }
   } else {
@@ -90,33 +120,37 @@ export const PayBlock = () => {
       </p>
 
       <div className="w-full space-y-4">
-        <Input
-          label="Recipient Address"
-          value={recipientAddress}
-          onChange={(e) => setRecipientAddress(e.target.value)}
-          placeholder="0x..."
-        />
+        <div>
+          <label className="block text-sm font-medium mb-1">Recipient Address</label>
+          <Input
+            value={recipientAddress}
+            onChange={(e) => setRecipientAddress(e.target.value)}
+            placeholder="0x..."
+          />
+        </div>
 
         <div className="flex gap-4">
-          <Select
-            label="Token"
-            value={selectedToken}
-            onChange={(value) => setSelectedToken(value as Tokens)}
-            options={[
-              { label: "WLD", value: Tokens.WLD },
-              { label: "USDC", value: Tokens.USDCE }
-            ]}
-            className="flex-1"
-          />
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Token</label>
+            <Select
+              value={selectedToken}
+              onChange={(value) => setSelectedToken(value as Tokens)}
+              options={[
+                { label: "WLD", value: Tokens.WLD },
+                { label: "USDC", value: Tokens.USDCE }
+              ]}
+            />
+          </div>
 
-          <Input
-            label="Amount"
-            type="number"
-            value={amount.toString()}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
-            placeholder="0.5"
-            className="flex-1"
-          />
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">Amount</label>
+            <Input
+              type="number"
+              value={amount.toString()}
+              onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+              placeholder="0.5"
+            />
+          </div>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ export default function CheckPage() {
   const [txHash, setTxHash] = useState("0xd13cddfa361b0ca0085e84e1cbc5848ea4a286e77f44d059a94520f01c955acb");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function querySubgraph(query: string) {
     try {

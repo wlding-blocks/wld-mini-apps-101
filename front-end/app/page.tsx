@@ -199,7 +199,7 @@ export default function Home() {
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Holdings Feature</h2>
                 <p className="text-sm text-gray-600 mb-4">
-                  Advanced portfolio tracking is coming soon! We're working hard to bring you comprehensive insights
+                  Advanced portfolio tracking is coming soon! We&apos;re working hard to bring you comprehensive insights
                   into your crypto investments.
                 </p>
                 <div className="bg-blue-50 rounded-lg p-3">
